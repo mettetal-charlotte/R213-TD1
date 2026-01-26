@@ -11,10 +11,10 @@ const event = Astro.props.event;
     </div>
     <p class="text-gray-600 text-sm mb-4">{event.date_evenement}</p>
     <p>{event.extrait}</p>
+    <p>{event.categorie}</p>
     <PbImage record={event} imageField="image"/>
-    <button
-        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors"
-    >
+    <button style="margin: 15px;"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors">
         Favori
     </button>
 </div>
