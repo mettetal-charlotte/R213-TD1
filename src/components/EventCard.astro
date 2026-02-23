@@ -1,34 +1,51 @@
 ---
-import PbImage from './PbImage.astro';
+import PbImage from "./PbImage.astro";
+import { formatDate } from "../js/utils.mjs";
+import Id from "../pages/agenda/[id].astro";
+
 const event = Astro.props.event;
 ---
 
 <div
     class="${event.favori ?'bg-yellow-200':'bg-white'} event-card border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
+    data-favori={event.favori} data-id={event.id}
 >
     <div class="flex items-center gap-2 mb-2">
         <strong class="text-lg">{event.nom_evenement}</strong>
     </div>
-    <p class="text-gray-600 text-sm mb-4">{event.date_evenement}</p>
+    <p class="text-gray-600 text-sm mb-4">{formatDate(event.date_evenement)}</p>
+    <p>{event.favori}</p>
     <p>{event.extrait}</p>
     <p>{event.categorie}</p>
-    <PbImage record={event} imageField="image"/>
-    <button style="margin: 15px;"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors">
+    <PbImage record={event} imageField="image" />
+    <button
+        style="margin: 15px;"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors"
+    >
         Favori
     </button>
+    <a href={`/agenda/${event.id}`}> Plus d'info </a>
 </div>
 
 <script>
     //@ts-nocheck
+    import { setFavori } from "../js/backend.mjs";
     const cards = document.querySelectorAll(".event-card");
     cards.forEach((card) => {
-        card.addEventListener("click", () => {
+        card.addEventListener("click", async () => {
             const isFavori = card.dataset.favori === "true";
-            card.dataset.favori = isFavori ? "false" : "true";
-            console.log(card.dataset.favori);
-            card.classList.toggle("bg-yellow-100");
-            card.classList.toggle("bg-white");
+            card.dataset.favori = !isFavori;
+            if (!isFavori) {
+                card.classList.add("bg-yellow-200");
+                card.classList.remove("bg-white");
+            } else {
+                card.classList.add("bg-yellow-200");
+                card.classList.remove("bg-white");
+            }
+            // Modification dans la base de données
+            const eventId = card.dataset.eventId;
+            console.log(eventId);
+            await setFavori(eventId, !isFavori);
         });
     });
 </script>

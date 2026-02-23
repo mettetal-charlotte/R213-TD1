@@ -1,7 +1,7 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import EventCard from "../components/EventCard.astro";
-import { getEvents } from "../js/backend.mjs";
+import Layout from "../../layouts/Layout.astro";
+import EventCard from "../../components/EventCard.astro";
+import { getEvents } from "../../js/backend.mjs";
 
 const evenements = await getEvents();
 console.log(evenements);
@@ -20,6 +20,9 @@ console.log(evenements);
 ---
 
 <Layout title="Agenda">
+    <a href="/agenda/add" class="text-blue-800 underline"
+        >Ajouter un événement</a
+    >
     <h1>Event agenda</h1>
     {evenements.map((event) => <EventCard event={event} />)}
 </Layout>
