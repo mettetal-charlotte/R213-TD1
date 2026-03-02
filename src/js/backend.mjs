@@ -44,3 +44,56 @@ export async function addEvent(data) {
         };
     }
 }
+
+export async function getArtistes() {
+    let artistes = await pb.collection("artiste").getFullList({ expand: "evenements" });  
+    return artistes;
+}
+
+export async function getArtisteById(artisteId) {
+    try {
+        let artiste = await pb.collection("artiste").getOne(artisteId);
+        return artiste;
+    } catch(error) {
+        console.error("Error fetching artist by ID:", error);
+        return null;
+    }
+}
+
+export async function getOneEvent(id) {
+    try {
+        const event = await pb.collection("events").getOne(id);
+        event.img = pb.files.getURL(event, event.imgUrl);
+        event.formattedDate = formatDate(event.date);
+        return event;
+    } catch (error) {
+        return null;
+    }
+}
+
+export async function updateEvent(id, data) {
+    try {
+        const event = await pb.collection("events").update(id, data);
+        return {
+            success: true,
+            event: event,
+            message: "L'événement a été modifié avec succès.",
+        };
+    } catch (error) {
+        return {
+            success: false,
+            event: null,
+            message: "Une erreur est survenue lors de la modification de l'événement: " + error,
+        };
+    }
+}
+
+export async function allArtists() {
+    try {
+        let artists = await pb.collection("artists").getFullList();
+        return artists
+    } catch (error) {
+        console.error("error allArtists: ", error);
+        return null;
+    }
+}

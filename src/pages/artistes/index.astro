@@ -1,0 +1,26 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getArtistes } from "../../js/backend.mjs";
+
+
+let artistes = await getArtistes();
+console.log(artistes);
+
+---
+
+<Layout title="Artistes">
+    <h1>Nos artistes</h1>
+    {
+        artistes.map((artiste) => (
+            <div class="border p-4 rounded-lg mb-4">
+                <h2 class="text-xl font-bold">{artiste.nom_artiste}</h2>
+                <h3>Evenements : </h3>
+                <ul class="list-disc list-inside">
+                    {artiste.expand?.events.map((ev) => (
+                        <li>{ev.title}</li>
+                    ))}
+                </ul>
+            </div>
+        ))
+    }
+</Layout>

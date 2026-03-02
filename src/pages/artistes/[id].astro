@@ -1,0 +1,16 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getArtistes } from "../../js/backend.mjs";
+import { getArtisteById } from "../../js/backend.mjs";
+const id = Astro.params.id;
+
+const artiste = await getArtisteById(id);
+
+---
+
+<Layout>
+    <h1>Artiste: {id}</h1>
+    <h2>{artiste.nom_artiste}</h2>
+    <h2>{artiste.prenom_artiste}</h2>
+    <p>{artiste.bio_artiste}</p>
+</Layout>

@@ -2,27 +2,63 @@
 import Layout from "../../layouts/Layout.astro";
 import EventCard from "../../components/EventCard.astro";
 import { getEvents } from "../../js/backend.mjs";
+import { allArtists } from "../../js/backend.mjs";
 
-const evenements = await getEvents();
+const artists = await allArtists();
+
+let evenements = await getEvents();
 console.log(evenements);
-// const events = [
-//     {
-//         title: "Conférence sur les astres",
-//         date: "Lundi 12 Juillet",
-//         favori: true,
-//     },
-//     {
-//         title: "Atelier sur les étoiles",
-//         date: "Mardi 13 Juillet",
-//         favori: false,
-//     },
-// ];
+
+let categories = ["Tout", ...new Set(evenements.map((ev) => ev.categorie))];
+console.log(categories);
+
+if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+    const selectedCategory = formData.get("categorie");
+    console.log(selectedCategory);
+    if (selectedCategory && selectedCategory !== "Tout") {
+        evenements = evenements.filter(
+            (ev) => ev.categorie === selectedCategory,
+        );
+        categories = [
+            selectedCategory,
+            ...categories.filter((cat) => cat !== selectedCategory),
+        ];
+    }
+}
 ---
 
 <Layout title="Agenda">
     <a href="/agenda/add" class="text-blue-800 underline"
         >Ajouter un événement</a
     >
+    <a href="/agenda/modify/[id]" class="text-blue-800 underline"
+        >Modifier un événement</a
+    >
+    <select name="artist" class="border my-4 p-2">
+        {
+            artiste?.map((artiste) => (
+                <option value={artiste.id} selected={event.artiste == artiste.id}>
+                    {artiste.first_name} {artiste.last_name}
+                </option>
+            ))
+        }
+    </select>
+    <form action="/agenda" method="post">
+        <select name="categorie" class="bg-yellow-500 rounded-lg p-3 m-3">
+            {
+                categories.map((categorie) => (
+                    <option value={categorie}>{categorie}</option>
+                ))
+            }
+        </select>
+        <input
+            type="submit"
+            value="Filtrer"
+            class="bg-pink-500 rounded-lg p-3"
+        />
+        <br /><br />
+    </form>
     <h1>Event agenda</h1>
     {evenements.map((event) => <EventCard event={event} />)}
 </Layout>
